@@ -1,10 +1,13 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from . import views
 
-app_name = 'users'
+router = DefaultRouter()
+router.register(r'reviews', views.ReviewViewSet, basename='review')
 
 urlpatterns = [
-    # Add your user-related endpoints here
-    # For now, just a placeholder
-    # path('profile/', views.UserProfileView.as_view(), name='user-profile'),
+    path('', include(router.urls)),
+    path('caregiver/<int:caregiver_id>/', views.caregiver_reviews, name='caregiver-reviews'),
+    path('caregiver/<int:caregiver_id>/stats/', views.ReviewStatsView.as_view(), name='review-stats'),
+    path('available/', views.available_to_review, name='available-to-review'),
 ]

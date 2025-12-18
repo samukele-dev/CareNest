@@ -17,8 +17,22 @@ Django settings for backend project.
 import os
 from pathlib import Path
 from datetime import timedelta
-from decouple import config
-
+# Try to use decouple, fallback to os.environ
+try:
+    from decouple import config
+except ImportError:
+    # Fallback for newer decouple or if not installed
+    def config(key, default=None, cast=None):
+        value = os.environ.get(key, default)
+        if cast and value is not None:
+            if cast == bool:
+                return str(value).lower() in ('true', '1', 'yes', 't')
+            elif cast == int:
+                return int(value)
+            elif cast == list:
+                return [item.strip() for item in value.split(',')]
+        return value
+    
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -192,7 +206,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 20,
+    'PAGE_SIZE': 40,
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.AnonRateThrottle',
         'rest_framework.throttling.UserRateThrottle',

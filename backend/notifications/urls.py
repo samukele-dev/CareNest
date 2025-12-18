@@ -1,10 +1,14 @@
-from django.urls import path
+# notifications/urls.py
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from . import views
 
-app_name = 'users'
+router = DefaultRouter()
+router.register(r'notifications', views.NotificationViewSet, basename='notification')
+router.register(r'preferences', views.NotificationPreferenceViewSet, basename='notificationpreference')
 
 urlpatterns = [
-    # Add your user-related endpoints here
-    # For now, just a placeholder
-    # path('profile/', views.UserProfileView.as_view(), name='user-profile'),
+    path('', include(router.urls)),
+    path('create/', views.create_notification, name='create-notification'),
+    path('test/', views.test_notification, name='test-notification'),
 ]

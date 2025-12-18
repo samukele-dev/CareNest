@@ -1,10 +1,15 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from . import views
 
-app_name = 'users'
+router = DefaultRouter()
+router.register(r'conversations', views.ConversationViewSet, basename='conversation')
+router.register(r'messages', views.MessageViewSet, basename='message')
+router.register(r'online-status', views.OnlineStatusViewSet, basename='online-status')
 
 urlpatterns = [
-    # Add your user-related endpoints here
-    # For now, just a placeholder
-    # path('profile/', views.UserProfileView.as_view(), name='user-profile'),
+    path('', include(router.urls)),
+    path('start-conversation/', views.start_conversation, name='start-conversation'),
+    path('unread-count/', views.unread_count, name='unread-count'),
+    path('conversations/<int:conversation_id>/mark-read/', views.mark_conversation_read, name='mark-conversation-read'),
 ]
