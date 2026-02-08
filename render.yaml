@@ -28,7 +28,7 @@ services:
     autoDeploy: true
 
   # --- REACT FRONTEND (Node Web Service) ---
-  - type: web
+  - type: static
     name: carenest-frontend
     env: node
     region: oregon
