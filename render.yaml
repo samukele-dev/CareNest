@@ -1,0 +1,33 @@
+services:
+  # --- DJANGO BACKEND ---
+  - type: web
+    name: carenest-backend
+    env: python
+    buildCommand: "./build.sh"
+    # Replace 'backend.wsgi' with your actual wsgi path if different
+    startCommand: "gunicorn backend.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0 # Or your version
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: "carenest-backend.onrender.com" # Update after first deploy
+      - key: DATABASE_URL
+        value: sqlite:////opt/render/project/src/data/db.sqlite3
+    disk:
+      name: sqlite-data
+      mountPath: /opt/render/project/src/data
+      sizeGB: 1
+
+  # --- REACT FRONTEND ---
+  - type: web
+    name: carenest-frontend
+    env: node
+    buildCommand: "npm install && npm run build"
+    staticPublishPath: "./carenest-frontend/dist"
+    envVars:
+      - key: VITE_API_URL
+        value: https://carenest-backend.onrender.com # Point to your backend

@@ -91,6 +91,7 @@ SITE_ID = 1
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # Must be first
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -148,13 +149,23 @@ DATABASES = {
 }
 
 # For development, you can use SQLite temporarily
-if DEBUG:
+# Database configuration
+if not DEBUG:
+    # Path for Render Persistent Disk
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': '/opt/render/project/src/data/db.sqlite3',
+        }
+    }
+else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -185,7 +196,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Media files (user uploads)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

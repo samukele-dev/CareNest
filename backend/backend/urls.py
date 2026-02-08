@@ -1,43 +1,20 @@
-"""
-URL configuration for backend project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
+# project_root/urls.py
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from rest_framework import permissions
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
+from django.http import JsonResponse
 
 urlpatterns = [
-    # Admin
     path('admin/', admin.site.urls),
     
     # Authentication
     path('api/auth/', include('dj_rest_auth.urls')),
     path('api/auth/registration/', include('dj_rest_auth.registration.urls')),
     
-    # API Documentation
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    # Optional UI:
-    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-
-    # API Endpoints
+    # ====== APP URLs (use app-specific urls.py files) ======
     path('api/users/', include('users.urls')),
-    path('api/profiles/', include('profiles.urls')),
+    path('api/profiles/', include('profiles.urls')),  # All profiles endpoints are handled here
     path('api/bookings/', include('bookings.urls')),
     path('api/payments/', include('payments.urls')),
     path('api/messaging/', include('messaging.urls')),
@@ -46,8 +23,18 @@ urlpatterns = [
     path('api/reviews/', include('reviews.urls')),
     path('api/notifications/', include('notifications.urls')),
     
+    # ====== HEALTH & API ROOT ======
+    path('health/', lambda request: JsonResponse({'status': 'healthy'}), name='health-check'),
     
-    # Health check
+    path('api/', lambda request: JsonResponse({
+        'message': 'CareNest API',
+        'endpoints': {
+            'auth': '/api/auth/',
+            'profiles': '/api/profiles/',
+            'users': '/api/users/',
+            'bookings': '/api/bookings/',
+        }
+    }), name='api-root'),
 ]
 
 # Serve media files in development
