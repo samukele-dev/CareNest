@@ -1,15 +1,24 @@
-#!/usr/bin/env bash
-# exit on error
-set -o errexit
+#!/bin/bash
+# build.sh
 
-# Install dependencies from root requirements.txt
-pip install -r requirements.txt
+echo "🚀 Building CareNest..."
 
-# Enter the django project folder to run management commands
-cd backend
+# Backend
+echo "🐍 Setting up Django..."
+pip install -r backend/requirements.txt
 
-# Collect static files for WhiteNoise
-python manage.py collectstatic --no-input
+# Frontend
+echo "⚛️ Building React frontend..."
+cd frontend
+npm install
+npm run build
+cd babckend
 
-# Run database migrations
-python manage.py migrate
+# Django setup
+echo "📦 Collecting static files..."
+python backend/manage.py collectstatic --noinput
+
+echo "🗄️ Running migrations..."
+python backend/manage.py migrate
+
+echo "✅ Build complete!"
