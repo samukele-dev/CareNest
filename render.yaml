@@ -23,7 +23,7 @@ services:
       sizeGB: 1
 
   # --- REACT FRONTEND ---
-  - type: static_site
+  - type: web
     name: carenest-frontend
     env: node
     buildCommand: "cd carenest-frontend && npm install && npm run build"
