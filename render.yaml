@@ -1,5 +1,4 @@
 services:
-  # --- DJANGO BACKEND ---
   - type: web
     name: carenest-backend
     env: python
@@ -22,27 +21,19 @@ services:
           property: connectionString
       - key: ALLOWED_HOSTS
         value: carenest-backend.onrender.com
-      - key: CORS_ALLOWED_ORIGINS
-        value: https://carenest-frontend.onrender.com
     healthCheckPath: /api/health/
-    autoDeploy: true
 
-  # --- REACT FRONTEND (Node Web Service) ---
-  - type: static_site
+  - type: web
     name: carenest-frontend
-    env: node
+    env: static
     region: oregon
     buildCommand: cd frontend && npm install && npm run build
-    startCommand: cd frontend && npm run preview -- --port $PORT --host
+    staticPublishPath: ./frontend/dist
     envVars:
       - key: NODE_VERSION
         value: 18.17.0
       - key: VITE_API_URL
         value: https://carenest-backend.onrender.com/api
-      - key: PORT
-        value: 3000
-    healthCheckPath: /
-    autoDeploy: true
 
 databases:
   - name: carenest-db
