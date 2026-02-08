@@ -2,11 +2,14 @@
 # exit on error
 set -o errexit
 
-# Install dependencies
+# Install dependencies from root requirements.txt
 pip install -r requirements.txt
 
-# Collect static files
-python backend/manage.py collectstatic --no-input
+# Enter the django project folder to run management commands
+cd backend
 
-# Run migrations
-python backend/manage.py migrate
+# Collect static files for WhiteNoise
+python manage.py collectstatic --no-input
+
+# Run database migrations
+python manage.py migrate
