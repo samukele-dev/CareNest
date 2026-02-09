@@ -1,13 +1,15 @@
 services:
+  # --- DJANGO BACKEND ---
   - type: web
     name: carenest-backend
     env: python
     region: oregon
     buildCommand: |
-      pip install -r backend/requirements.txt
-      python backend/manage.py collectstatic --noinput
-      python backend/manage.py migrate
-    startCommand: cd backend && gunicorn carenest.wsgi:application --bind 0.0.0.0:$PORT
+      cd backend
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
+      python manage.py migrate
+    startCommand: cd backend && gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
@@ -22,17 +24,31 @@ services:
       - key: ALLOWED_HOSTS
         value: carenest-backend.onrender.com
     healthCheckPath: /api/health/
+    autoDeploy: true
 
+  # --- REACT FRONTEND ---
   - type: web
     name: carenest-frontend
     env: static
-    buildCommand: cd frontend && npm install && npm run build
-    staticPublishPath: ./frontend/dist
+    region: oregon
+    buildCommand: |
+      cd carenest-frontend
+      npm install
+      npm run build
+    staticPublishPath: ./carenest-frontend/dist
     envVars:
       - key: NODE_VERSION
         value: 18.17.0
       - key: VITE_API_URL
         value: https://carenest-backend.onrender.com/api
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=3600
 
 databases:
   - name: carenest-db
