@@ -30,7 +30,6 @@ services:
   - type: web
     name: carenest-frontend
     env: static
-    region: oregon
     buildCommand: |
       cd carenest-frontend
       npm install
